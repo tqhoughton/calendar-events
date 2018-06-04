@@ -30,6 +30,7 @@ module.exports = {
       return queryInterface.bulkInsert('CalendarEvents', [{
         name: 'Office Meeting',
         description: 'We need to discuss TPS reports.',
+        timeZone: 'America/Denver',
         startAt: new Date('June 1, 2018 03:24:00'),
         endAt: new Date('June 3, 2018 09:11:00'),
         createdAt: new Date(),
@@ -37,9 +38,10 @@ module.exports = {
       }, {
         name: 'Monday Stand-up',
         description: 'This is our monday morning standup.',
+        timeZone: 'America/Denver',
         startAt: new Date('June 4, 2018 12:00:00'),
         endAt: new Date('June 4, 2018 13:00:00'),
-        rRuleSet: JSON.stringify(['FREQ=WEEKLY;DTSTART=20180605T000000Z;WKST=MO']),
+        rRuleSet: 'RRULE:FREQ=WEEKLY;DTSTART=20180606T000000Z;WKST=MO;BYHOUR=18',
         createdAt: new Date(),
         updatedAt: new Date()
       }])

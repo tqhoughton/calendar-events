@@ -3,17 +3,28 @@ const express = require('express'),
       cors = require('cors'),
       db = require('./models'),
       rruleset = require('rrule').rruleset,
-      rrulestr = require('rrule').rrulestr
-      Op = require('sequelize').Op
+      rrulestr = require('rrule').rrulestr,
+      Op = require('sequelize').Op,
+      moment = require('moment-timezone')
 
 const port = 8000
 const app = express()
 
-function getOccurrances(rRuleSetStr, start, end) {
+function getOccurrances(rRuleSetStr, timeZone, start, end) {
   const ruleSet = rrulestr(rRuleSetStr)
-  const occurrances = ruleSet.between(start, end)
-  occurrances.forEach(i => console.log(i.toLocaleString()))
-  return occurrances.length;
+
+  const serverTimezone = moment.tz.zone('UTC')
+  const targetTimezone = moment.tz.zone(timeZone)
+
+  const dates = ruleSet.between(start, end)
+  const convertedDates = dates.map(date => {
+    const offset = targetTimezone.offset(date) - serverTimezone.offset(date);
+    console.log('offset is: ', offset)
+    // return moment(date).add(offset, 'minutes').toDate()
+    return moment(date).toDate()
+  });
+
+  return convertedDates
 }
 
 app.use(bodyParser.json())
@@ -61,19 +72,17 @@ app.get('/users/:id/calendar-events', (req, res) => {
       delete event.CalendarEventUsers
     }
     // compute to see if recurring events fall under date range
-    const rRuleSets = new Set(
-      events.map(event => event.rRuleSet)
-      .filter(i => (i))
-    )
-    rRuleSets.forEach(rRuleSet => {
-      if (!getOccurrances(rRuleSet, start, end)) {
-        rRuleSets.delete(rRuleSet)
+    events.forEach(event => {
+      const rRuleSet = event.rRuleSet
+      const timeZone = event.timeZone
+      
+      if (rRuleSet) {
+        const occurrances = getOccurrances(rRuleSet, timeZone, start, end)
+        event.occurrances = occurrances
       }
     })
-    console.log('rulesets are: ', rRuleSets)
-    events = events.filter(event => {
-      return (!event.rRuleSet || rRuleSets.has(event.rRuleSet))
-    })
+
+    events = events.filter(event => !event.rRuleSet || event.occurrances.length)
     return res.send(events)
   })
 })

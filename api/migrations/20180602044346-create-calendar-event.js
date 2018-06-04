@@ -20,6 +20,10 @@ module.exports = {
         allowNull: true,
         type: Sequelize.STRING
       },
+      timeZone: {
+        allowNull: false,
+        type: Sequelize.STRING
+      },
       startAt: {
         allowNull: false,
         type: Sequelize.DATE

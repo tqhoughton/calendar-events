@@ -4,6 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     description: DataTypes.STRING,
     rRuleSet: DataTypes.STRING,
+    timeZone: DataTypes.STRING,
     startAt: DataTypes.DATE,
     endAt: DataTypes.DATE
   }, {});
