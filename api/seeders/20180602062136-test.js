@@ -1,5 +1,7 @@
 'use strict';
 
+const moment = require('moment-timezone')
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
     /*
@@ -38,10 +40,10 @@ module.exports = {
       }, {
         name: 'Monday Stand-up',
         description: 'This is our monday morning standup.',
-        timeZone: 'America/Denver',
-        startAt: new Date('June 4, 2018 12:00:00'),
-        endAt: new Date('June 4, 2018 13:00:00'),
-        rRuleSet: 'RRULE:FREQ=WEEKLY;DTSTART=20180606T000000Z;WKST=MO;BYHOUR=18',
+        timeZone: 'America/Phoenix',
+        startAt: moment.tz("2018-06-05 12:00", "America/Phoenix").toDate(),
+        endAt: moment.tz("2018-06-05 13:00", "America/Phoenix").toDate(),
+        rRuleSet: 'RRULE:FREQ=MONTHLY;DTSTART=20180606T000000Z;COUNT=30;WKST=MO;BYDAY=MO;BYSETPOS=1;BYHOUR=12',
         createdAt: new Date(),
         updatedAt: new Date()
       }])
@@ -76,7 +78,14 @@ module.exports = {
       return queryInterface.bulkDelete('Person', null, {});
     */
 
-    return queryInterface.bulkDelete('Users', null, {})
-    .then(() => queryInterface.bulkDelete('CalendarEvents', null, {}))
+    // return queryInterface.bulkDelete('CalendarEventUsers', {})
+    // .then(() => queryInterface.dropTable('Users', null, {}))
+    // .then(() => queryInterface.dropTable('CalendarEvents', null, {}))
+
+    return queryInterface.sequelize.query(`SET FOREIGN_KEY_CHECKS = 0;`)
+    .then(() => queryInterface.sequelize.query(`TRUNCATE TABLE CalendarEventUsers;`))
+    .then(() => queryInterface.sequelize.query(`TRUNCATE TABLE CalendarEvents;`))
+    .then(() => queryInterface.sequelize.query(`TRUNCATE TABLE Users;`))
+    .then(() => queryInterface.sequelize.query(`SET FOREIGN_KEY_CHECKS = 1;`))
   }
 };

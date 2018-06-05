@@ -13,15 +13,16 @@ const app = express()
 function getOccurrances(rRuleSetStr, timeZone, start, end) {
   const ruleSet = rrulestr(rRuleSetStr)
 
-  const serverTimezone = moment.tz.zone('UTC')
+  console.log('timezone is: ', timeZone)
+
+  const serverTimezone = moment.tz.zone('America/Denver')
   const targetTimezone = moment.tz.zone(timeZone)
 
   const dates = ruleSet.between(start, end)
   const convertedDates = dates.map(date => {
-    const offset = targetTimezone.offset(date) - serverTimezone.offset(date);
+    const offset = targetTimezone.utcOffset(date) - serverTimezone.utcOffset(date);
     console.log('offset is: ', offset)
-    // return moment(date).add(offset, 'minutes').toDate()
-    return moment(date).toDate()
+    return moment(date).add(offset, 'minutes').toDate()
   });
 
   return convertedDates
