@@ -46,6 +46,15 @@ module.exports = {
         rRuleSet: 'RRULE:FREQ=MONTHLY;DTSTART=20180606T000000Z;COUNT=30;WKST=MO;BYDAY=MO;BYSETPOS=1;BYHOUR=12',
         createdAt: new Date(),
         updatedAt: new Date()
+      }, {
+        name: 'Monday Stand-up (NY Team)',
+        description: 'This is our monday morning standup. But we\'re in New York, so it\'s a lot cooler.',
+        timeZone: 'America/New_York',
+        startAt: moment.tz("2018-06-05 12:00", "America/New_York").toDate(),
+        endAt: moment.tz("2018-06-05 13:00", "America/New_York").toDate(),
+        rRuleSet: 'RRULE:FREQ=MONTHLY;DTSTART=20180606T000000Z;COUNT=30;WKST=MO;BYDAY=MO;BYSETPOS=1;BYHOUR=12',
+        createdAt: new Date(),
+        updatedAt: new Date()
       }])
     })
     .then(() => {
@@ -62,6 +71,12 @@ module.exports = {
       }, {
         userId: 1,
         calendarEventId: 2,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        userId: 1,
+        calendarEventId: 3,
         createdAt: new Date(),
         updatedAt: new Date()
       }

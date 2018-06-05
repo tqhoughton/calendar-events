@@ -1,10 +1,12 @@
-# Calendar Events Demo
+# NodeJS Recurring Events Demo
 
 ### About
 
-This repo is an example project to show how timezone-specific recurring events in a relational database can be stored and queried.
+This repo is an example project to show how timezone-specific recurring events in a relational database can be stored and queried using NodeJS.
 
 This repo has a sample MySQL database using Sequelize for the ORM and CLI, as well as a simple express application that has 2 endpoints: `/users` and `/users/calendar-events`. The latter endpoint takes a starting date and an ending date, and using the `rRuleSet` column in CalendarEvents can compute all of the occurrances of that event between those dates.
+
+### The Problem
 
 Recurring events is a concept that seems really simple at first glance. However, if you investigate the problem at all, you will quickly find that creating a database model that handles recurring events, exceptions to those events, and all CRUD-related aspects of managing them will make you want to pull your hair out.
 
@@ -18,11 +20,11 @@ George lives in Phoenix, Arizona. He creates an event that is set to happen on t
 
 The problem is different regions respecting DST differently. In this case, our server is the `America/Denver` region, while George is in the `America/Phoenix` region. When George sends his recurring event to the server, it is sent as an rRule string. The server then takes this rrule string, and creates a bunch of events that follow that rrule. However, it is doing so based on the *server's* timezone, which in this case is `America/Denver` which has Daylight Savings for 4 months out of the year. So the server creates the events as if the user was in a region that uses DST, and sends those occurrances back to George.
 
-What is the solution?
+### The Solution
 
 We could set our server timezone to `America/Phoenix`, however then we would have problems with events generated in regions *with* DST. So clearly, we need a more robust solution.
 
-The solution is that we create an event, we also need to send the user's timezone information with the request, which in this case is `America/Phoenix` timezone. Then on the server, we use the `moment-timezone` library to compute what the actual dates in the user's timezone would be. Then, we return those occurances as a UTC date so that anyone can use them.
+The solution is that we create an event, we also need to send the user's timezone information with the request, which in this case is `America/Phoenix` timezone. Then on the server, we use the `moment-timezone` library to compute what the actual dates in the user's timezone would be using timezone offsets. Then, we return those occurances as a UTC date so that anyone can use them.
 
 ### Downsides
 
